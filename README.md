@@ -5,6 +5,8 @@ Free Micro Plan available with 500 validations per month.
 
 Please visit the [FraudLabs Pro Articles & Tutorials](https://www.fraudlabspro.com/resources/) to learn more about our fraud validation.
 
+*Note: This plugin works in nopCommerce 4.40*
+
 ### Why FraudLabs Pro
 
 * **Flexibility**
@@ -39,3 +41,9 @@ We have been in the fraud prevention industry for more than 10 years. Thousands 
 1. Upload the plugin archive using the "Upload plugin or theme" plugin.
 1. Scroll down through the list of plugins to find the newly installed plugin. And click on the "Install" button to install the plugin.
 1. Sign up for a [Free license key](https://www.fraudlabspro.com/pricing) and start protecting your business from payment fraud.
+
+## SUPPORT
+
+Email: support@fraudlabspro.com
+
+Please visit us at [FraudLabs Pro](https://www.fraudlabspro.com/supported-platforms/nopcommerce/) for more information.
