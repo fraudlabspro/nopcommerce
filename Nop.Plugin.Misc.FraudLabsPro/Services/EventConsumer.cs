@@ -81,11 +81,7 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
         }*/
         public async Task HandleEventAsync(PageRenderingEvent eventMessage)
         {
-            if (eventMessage?.Helper?.ViewContext == null)
-                return;
-
-            //check whether the plugin is active
-            if (!await _widgetPluginManager.IsPluginActiveAsync(FraudLabsProDefaults.SystemName))
+            if (eventMessage.Helper == null || !await _widgetPluginManager.IsPluginActiveAsync(FraudLabsProDefaults.SystemName))
                 return;
 
             //add js sсript to the one page checkout

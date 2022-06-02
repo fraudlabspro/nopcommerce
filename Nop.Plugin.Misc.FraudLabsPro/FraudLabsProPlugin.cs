@@ -107,7 +107,7 @@ namespace Nop.Plugin.Misc.FraudLabsPro
             });
 
             //locales
-            await _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
+            await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>
             {
                 ["Plugins.Misc.FraudLabsPro.Fields.ApiKey"] = "API key",
                 ["Plugins.Misc.FraudLabsPro.Fields.ApiKey.Hint"] = "Input your FraudLabs Pro account API key.",

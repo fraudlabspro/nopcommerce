@@ -5,7 +5,7 @@ Free Micro Plan available with 500 validations per month.
 
 Please visit the [FraudLabs Pro Articles & Tutorials](https://www.fraudlabspro.com/resources/) to learn more about our fraud validation.
 
-*Note: This plugin works in nopCommerce 4.40*
+*Note: This plugin works in nopCommerce 4.40, 4.50*
 
 ### Why FraudLabs Pro
 
