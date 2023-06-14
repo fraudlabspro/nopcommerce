@@ -15,7 +15,7 @@ We offer you a flexible solution to identify a fraud order. You can use our Frau
 
 * **Free**
 
-We are not offering you a trial version, but a free version to start protecting your online business. It’s absolutely free if your monthly orders are less than 500 transactions. There is no upfront credit card information needed, commitment, hidden cost and whatsoever.
+We are not offering you a trial version, but a free version to start protecting your online business. It’s absolutely free if your monthly orders are less than 500 transactions or monthly sales are less than 25K USD. There is no upfront credit card information needed, commitment, hidden cost and whatsoever.
 
 * **Trustworthy**
 
