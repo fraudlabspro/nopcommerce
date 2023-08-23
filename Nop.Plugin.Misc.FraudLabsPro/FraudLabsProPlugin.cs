@@ -269,6 +269,11 @@ namespace Nop.Plugin.Misc.FraudLabsPro
             await base.UninstallAsync();
         }
 
+        public Type GetWidgetViewComponent(string widgetZone)
+        {
+            return typeof(Components.FraudLabsProOrderViewComponent);
+        }
+
         #endregion
 
         /// <summary>
