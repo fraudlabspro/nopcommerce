@@ -1,17 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
-using Nop.Core.Infrastructure.DependencyManagement;
 using Nop.Plugin.Misc.FraudLabsPro.Factories;
 using Nop.Plugin.Misc.FraudLabsPro.Services;
-using Nop.Services.Messages;
 
 namespace Nop.Plugin.Misc.FraudLabsPro.Infrastructure
 {
     /// <summary>
     /// Represents a FraudLabs Pro dependency registrar
     /// </summary>
-    public class DependencyRegistrar : IDependencyRegistrar
+    public class DependencyRegistrar
     {
         /// <summary>
         /// Register services and interfaces

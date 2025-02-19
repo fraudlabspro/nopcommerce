@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nop.Core;
+using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
 using Nop.Services.Customers;
@@ -31,6 +32,7 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
         private readonly ILogger _logger;
         private readonly IOrderProcessingService _orderProcessingService;
         private readonly IOrderService _orderService;
+        private readonly IProductService _productService;
         private readonly ISettingService _settingService;
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IStoreContext _storeContext;
@@ -51,6 +53,7 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
             ILogger logger,
             IOrderProcessingService orderProcessingService,
             IOrderService orderService,
+            IProductService productService,
             ISettingService settingService,
             IStateProvinceService stateProvinceService,
             IStoreContext storeContext,
@@ -67,7 +70,7 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
             _logger = logger;
             _orderProcessingService = orderProcessingService;
             _orderService = orderService;
-            _orderService = orderService;
+            _productService = productService;
             _settingService = settingService;
             _stateProvinceService = stateProvinceService;
             _storeContext = storeContext;
@@ -91,6 +94,26 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
             httpContext.Request.Cookies.TryGetValue(cookieName, out var cookieChecksum);
 
             return cookieChecksum ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Parse result from FraudLabs Pro
+        /// </summary>
+        /// <returns>String</returns>
+        private string ParseFlpResult(JToken fraudLabsProResult)
+        {
+            if (fraudLabsProResult.Equals(null))
+            {
+                return "N/A";
+            }
+            else if ((bool) fraudLabsProResult)
+            {
+                return "Yes";
+            }
+            else
+            {
+                return "No";
+            }
         }
 
         /// <summary>
@@ -144,7 +167,7 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
         /// </summary>
         /// <param name="order">NopCommerce order object</param>
         /// <returns>OrderResult</returns>
-        public async Task<OrderResult> ScreenOrder(NopOrder order)
+        public async Task<JObject> ScreenOrder(NopOrder order)
         {
             //whether plugin is configured
             if (string.IsNullOrEmpty(_fraudLabsProSettings.ApiKey))
@@ -200,6 +223,10 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
                         screenOrderPara.BinNo = cardNumber.Substring(0, 6);
                         screenOrderPara.CardNumber = cardNumber;
                         screenOrderPara.PaymentMode = Order.PaymentMethods.CREDIT_CARD;
+                        screenOrderPara.PaymentGateway = "creditcard";
+                    } else {
+                        screenOrderPara.PaymentMode = order.PaymentMethodSystemName ?? string.Empty;
+                        screenOrderPara.PaymentGateway = order.PaymentMethodSystemName ?? string.Empty;
                     }
 
                     // Order Information
@@ -207,21 +234,59 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
                     screenOrderPara.UserOrderID = order.Id.ToString();
                     screenOrderPara.UserOrderMemo = order.OrderGuid.ToString();
                     screenOrderPara.Amount = order.OrderTotal;
-                    screenOrderPara.Quantity = (await _orderService.GetOrderItemsAsync(order.Id)).Sum(x => x.Quantity);
                     screenOrderPara.Currency = order.CustomerCurrencyCode ?? string.Empty;
+                    screenOrderPara.Quantity = (await _orderService.GetOrderItemsAsync(order.Id)).Sum(x => x.Quantity);
+                    var itemSku = "";
+                    foreach (var item in await _orderService.GetOrderItemsAsync(order.Id))
+                    {
+                        var product = await _productService.GetProductByIdAsync(item.ProductId);
+                        var qty = item.Quantity;
+                        var sku = await _productService.FormatSkuAsync(product, item.AttributesXml);
+                        if (string.IsNullOrEmpty(sku))
+                        {
+                            sku = product.Id.ToString();
+                        }
+                        itemSku += sku + ':' + qty + ',';
+                    }
+                    itemSku = itemSku.TrimEnd(',');
+                    screenOrderPara.Items = itemSku;
 
                     // ScreenOrder API
                     var screenOrder = new Order();
                     // Send order to FraudLabs Pro
-                    var result = screenOrder.ScreenOrder(screenOrderPara);
+                    JObject result = screenOrder.ScreenOrder(screenOrderPara);
                     await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultAttribute, JsonConvert.SerializeObject(result));
-                    _fraudLabsProSettings.Balance = result.FraudLabsProCredit;
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultFraudLabsProID, result["fraudlabspro_id"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultFraudLabsProScore, result["fraudlabspro_score"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultFraudLabsProStatus, result["fraudlabspro_status"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultFraudLabsProCredit, result["remaining_credits"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPAddress, result["ip_geolocation"]["ip"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPNetSpeed, result["ip_geolocation"]["netspeed"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPDomain, result["ip_geolocation"]["domain"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPTimeZone, result["ip_geolocation"]["timezone"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPLatitude, result["ip_geolocation"]["latitude"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPLongtitude, result["ip_geolocation"]["longitude"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPContinent, result["ip_geolocation"]["continent"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPCountry, result["ip_geolocation"]["country_name"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPRegion, result["ip_geolocation"]["region"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPCity, result["ip_geolocation"]["city"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPISPName, result["ip_geolocation"]["isp_name"]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIPUsageType, result["ip_geolocation"]["usage_type"][0]);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIsProxyIPAddress, ParseFlpResult(result["ip_geolocation"]["is_proxy"]));
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIsAddressShipForward, ParseFlpResult(result["shipping_address"]["is_address_ship_forward"]));
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIsBinFound, ParseFlpResult(result["credit_card"]["is_bin_exist"]));
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIsCreditCardBlacklist, ParseFlpResult(result["credit_card"]["is_in_blacklist"]));
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultDistanceInKM, result["billing_address"]["ip_distance_in_km"].ToString());
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultDistanceInMile, result["billing_address"]["ip_distance_in_mile"].ToString());
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIsFreeEmail, ParseFlpResult(result["email_address"]["is_free"]));
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultIsEmailBlacklist, ParseFlpResult(result["email_address"]["is_in_blacklist"]));
+                    _fraudLabsProSettings.Balance = result["remaining_credits"].ToString();
                     await _settingService.SaveSettingAsync(_fraudLabsProSettings);
 
                     //save order status
-                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderStatusAttribute, result.FraudLabsProStatus);
+                    await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderStatusAttribute, result["fraudlabspro_status"]);
 
-                    _ = UpdateOrerStatus(order, result.FraudLabsProStatus);
+                    _ = UpdateOrerStatus(order, result["fraudlabspro_status"].ToString());
 
                     return result;
                 }
@@ -240,7 +305,7 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
         /// </summary>
         /// <param name="transactionId">Unique transaction Id generated by Fraud Check API.</param>
         /// <param name="actionName">Perform APPROVE, REJECT, or REJECT_BLACKLIST action to transaction.</param>
-        public async Task<OrderResult> OrderFeedbackAsync(int orderId, string transactionId, string actionName)
+        public async Task<JObject> OrderFeedbackAsync(int orderId, string transactionId, string actionName)
         {
             //whether plugin is configured
             if (string.IsNullOrEmpty(_fraudLabsProSettings.ApiKey))
@@ -261,9 +326,9 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
 
                 // Feedback Order API
                 var feedbackOrder = new Order();
-                var result = feedbackOrder.FeedbackOrder(feedbackOrderParameter);
+                JObject result = feedbackOrder.FeedbackOrder(feedbackOrderParameter);
 
-                if (string.IsNullOrEmpty(result.FraudLabsProErrorCode) && string.IsNullOrEmpty(result.FraudLabsProMessage))
+                if ((bool) result["fraudlabspro_id"])
                 {
                     var order = await _orderService.GetOrderByIdAsync(orderId);
                     _ = UpdateOrerStatus(order, actionName);
@@ -277,10 +342,12 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
                         await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderStatusAttribute, actionName);
 
                         actionName = (actionName == Order.Action.REJECT_BLACKLIST) ? Order.Action.REJECT : actionName;
-                        orderObject[nameof(OrderResult.FraudLabsProStatus)] = actionName;
-
+                        // orderObject[nameof(OrderResult.FraudLabsProStatus)] = actionName;
                         await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultAttribute, orderObject.ToString());
+                        await _genericAttributeService.SaveAttributeAsync(order, FraudLabsProDefaults.OrderResultFraudLabsProStatus, actionName);
+
                     }
+                    return (JObject)result["fraudlabspro_id"];
                 }
 
                 return result;

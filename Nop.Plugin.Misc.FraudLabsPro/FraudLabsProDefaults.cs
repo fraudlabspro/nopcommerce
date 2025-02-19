@@ -46,12 +46,36 @@
         public static string ConfirmCheckoutRouteName => "CheckoutConfirm";
 
         /// <summary>
-        /// Gets a key of the Oredr result
+        /// Gets a key of the Order result
         /// </summary>
         public static string OrderResultAttribute => "FraudLabsProOrderResult";
+        public static string OrderResultFraudLabsProID => "FraudLabsProID";
+        public static string OrderResultFraudLabsProScore => "FraudLabsProScore";
+        public static string OrderResultFraudLabsProStatus => "FraudLabsProStatus";
+        public static string OrderResultFraudLabsProCredit => "FraudLabsProCredit";
+        public static string OrderResultIPAddress => "IPAddress";
+        public static string OrderResultIPNetSpeed => "IPNetSpeed";
+        public static string OrderResultIPDomain => "IPDomain";
+        public static string OrderResultIPTimeZone => "IPTimeZone";
+        public static string OrderResultIPLatitude => "IPLatitude";
+        public static string OrderResultIPLongtitude => "IPLongtitude";
+        public static string OrderResultIPContinent => "IPContinent";
+        public static string OrderResultIPCountry => "IPCountry";
+        public static string OrderResultIPRegion => "IPRegion";
+        public static string OrderResultIPCity => "IPCity";
+        public static string OrderResultIPISPName => "IPISPName";
+        public static string OrderResultIPUsageType => "IPUsageType";
+        public static string OrderResultIsProxyIPAddress => "IsProxyIPAddress";
+        public static string OrderResultIsAddressShipForward => "IsAddressShipForward";
+        public static string OrderResultIsBinFound => "IsBinFound";
+        public static string OrderResultIsCreditCardBlacklist => "IsCreditCardBlacklist";
+        public static string OrderResultDistanceInKM => "DistanceInKM";
+        public static string OrderResultDistanceInMile => "DistanceInMile";
+        public static string OrderResultIsFreeEmail => "IsFreeEmail";
+        public static string OrderResultIsEmailBlacklist => "IsEmailBlacklist";
 
         /// <summary>
-        /// Gets a key of the Oredr status
+        /// Gets a key of the Order status
         /// </summary>
         public static string OrderStatusAttribute => "FraudLabsProOrderStatus";
 

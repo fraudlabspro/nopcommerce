@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Version>2.0.0</Version>
     <TargetFramework>net7.0</TargetFramework>
     <Copyright>Copyright © Nop Solutions, Ltd</Copyright>
     <Company>Nop Solutions, Ltd</Company>
@@ -54,7 +55,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FraudLabsPro" Version="1.2.1" />
+    <PackageReference Include="FraudLabsPro" Version="2.0.3" />
   </ItemGroup>
 
   <ItemGroup>
