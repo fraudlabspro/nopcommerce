@@ -69,7 +69,7 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Controllers
         #region Methods
 
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         public IActionResult Configure()
         {
             var model = new ConfigurationModel();
@@ -79,7 +79,7 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Controllers
         }
 
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         [HttpPost, ActionName("Configure")]
         [FormValueRequired("save")]
         public async Task<IActionResult> Configure(ConfigurationModel model)
