@@ -40,8 +40,8 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Controllers
         public async Task<IActionResult> FraudLabsProOrderScreen(int orderId)
         {
             //whether user has the authority
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
+            //if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
+                //return AccessDeniedView();
 
             var order = await _orderService.GetOrderByIdAsync(orderId);
 
@@ -60,8 +60,8 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Controllers
         public async Task<IActionResult> FraudLabsProOrderApprove(string transactionId, int orderId)
         {
             //whether user has the authority
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
+            //if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
+                //return AccessDeniedView();
 
             if (!string.IsNullOrEmpty(transactionId))
             {
@@ -78,8 +78,8 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Controllers
         public async Task<IActionResult> FraudLabsProOrderReject(string transactionId, int orderId)
         {
             //whether user has the authority
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
+            //if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
+                //return AccessDeniedView();
 
             if (!string.IsNullOrEmpty(transactionId))
             {
@@ -96,8 +96,8 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Controllers
         public async Task<IActionResult> FraudLabsProOrderBlackList(string transactionId, int orderId)
         {
             //whether user has the authority
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
+            //if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
+                //return AccessDeniedView();
 
             if (!string.IsNullOrEmpty(transactionId))
             {
