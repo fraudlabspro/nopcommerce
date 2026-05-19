@@ -198,6 +198,7 @@ namespace Nop.Plugin.Misc.FraudLabsPro.Services
                     // Billing Information
                     if (billingAddress != null)
                     {
+                        screenOrderPara.BillTo = billingAddress.Company ?? string.Empty;
                         screenOrderPara.BillAddress = billingAddress.Address1 + " " + billingAddress.Address2;
                         screenOrderPara.BillCity = billingAddress.City ?? string.Empty;
                         screenOrderPara.BillState = (await _stateProvinceService.GetStateProvinceByAddressAsync(billingAddress))?.Name ?? string.Empty;
