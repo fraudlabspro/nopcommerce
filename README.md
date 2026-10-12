@@ -1,9 +1,9 @@
 # FraudLabs Pro nopCommerce plugin
 Fraud prevention plugin to help merchants to screen the order transactions for payment fraud. Its comprehensive and advanced algorithm engines validate all elements such as geolocation, anonymous proxy, email address, blacklist record, credit card BIN, transaction velocity and many more to pinpoint fraud orders accurately.
 
-Free Micro Plan available with 500 validations per month.
+Free Micro Plan: Get 500 fraud validations per month at no cost. [Sign Up For Free](https://www.fraudlabspro.com/checkout-micro).
 
-Please visit the [FraudLabs Pro Articles & Tutorials](https://www.fraudlabspro.com/resources/) to learn more about our fraud validation.
+Explore our [FraudLabs Pro Articles & Tutorials](https://www.fraudlabspro.com/resources/) to learn more about fraud validation.
 
 *Note: This plugin works in nopCommerce 4.40, 4.50, 4.60, 4.70, 4.80, 4.90*
 
@@ -16,6 +16,8 @@ We offer you a flexible solution to identify a fraud order. You can use our Frau
 * **Free**
 
 We are not offering you a trial version, but a free version to start protecting your online business. It’s absolutely free if your monthly orders are less than 500 transactions or monthly sales are less than 25K USD. There is no upfront credit card information needed, commitment, hidden cost and whatsoever.
+
+[Sign up for a Free Micro Plan API key](https://www.fraudlabspro.com/checkout-micro)
 
 * **Trustworthy**
 
@@ -41,7 +43,7 @@ We have been in the fraud prevention industry for more than 10 years. Thousands 
 1. Go to admin area > configuration > local plugins.
 1. Upload the FraudLabsPro.zip using the "Upload plugin or theme" plugin.
 1. Scroll down through the list of plugins to find the newly installed plugin. And click on the "Install" button to install the plugin.
-1. Sign up for a [Free license key](https://www.fraudlabspro.com/pricing) and start protecting your business from payment fraud.
+1. Sign up for a [Free license key](https://www.fraudlabspro.com/checkout-micro) and start protecting your business from payment fraud.
 
 ## SUPPORT
 
